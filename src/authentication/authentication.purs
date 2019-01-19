@@ -10,7 +10,7 @@ import Data.Either (hush)
 import Data.Function (flip, (#), ($))
 import Data.Maybe (Maybe)
 import Data.Semigroup ((<>))
-import Data.String.Base64 (atob, encode)
+import Data.String.Base64 (atob)
 import Data.Tuple (Tuple(..))
 import PurelyScriptable.Request (Header)
 
@@ -22,5 +22,5 @@ passwordAuth = authHelper
 
 authHelper :: String -> String -> Maybe Header
 authHelper a b = do
-  key <- a <> b # encode >>> pure
+  key <- a <> b # atob >>> hush
   pure $ Tuple "Authorization" ("Basic: " <> key) 
