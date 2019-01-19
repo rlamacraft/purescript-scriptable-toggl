@@ -23,4 +23,4 @@ passwordAuth = authHelper
 authHelper :: String -> String -> Maybe Header
 authHelper a b = do
   key <- a <> b # btoa >>> hush
-  pure $ Tuple "Authorization" ("Basic: " <> key) 
+  pure $ Tuple "Authorization" ("Basic " <> key) 
