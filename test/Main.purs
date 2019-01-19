@@ -2,8 +2,9 @@ module Test.Main where
 
 import Prelude
 import Effect (Effect)
-import Effect.Console (log)
+import Test.Unit.Main (runTest)
+import Test.Authentication (testAuthentication)
 
 main :: Effect Unit
-main = do
-  log "You should add some tests."
+main = runTest do
+  testAuthentication

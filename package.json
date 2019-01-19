@@ -1,0 +1,25 @@
+{
+  "name": "purescript-scriptable-toggl",
+  "version": "0.0.0",
+  "description": "Wrapper around [Toggl's](https://toggl.com) [API](https://github.com/toggl/toggl_api_docs) for use when building PureScript-based scripts (using [purescript-purely-scriptable](https://github.com/rlamacraft/purescript-purely-scriptable)) for the Scriptable iOS app.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "pulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rlamacraft/purescript-scriptable-toggl.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rlamacraft/purescript-scriptable-toggl/issues"
+  },
+  "homepage": "https://github.com/rlamacraft/purescript-scriptable-toggl#readme",
+  "devDependencies": {
+    "text-encoding": "^0.6.4"
+  }
+}
