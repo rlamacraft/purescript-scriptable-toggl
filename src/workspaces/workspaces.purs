@@ -17,7 +17,7 @@ import Data.Show (class Show, show)
 import Data.Traversable (sequence)
 import Effect.Aff (Aff)
 import PurelyScriptable.Request (Header, loadDecodable)
-import PurelyScriptable.Toggl.Common (fetch)
+import PurelyScriptable.Toggl.Common (togglRequest)
 
 data RoundingType = Down | Nearest | Up
 derive instance eqRoundingType :: Eq RoundingType
@@ -101,4 +101,4 @@ instance decodeWorkspaces :: DecodeJson Workspaces where
     ws # Workspaces >>> pure
 
 getWorkspaces :: Header -> Aff (Either String (Workspaces))
-getWorkspaces = fetch "workspaces" >>> loadDecodable
+getWorkspaces header = togglRequest header ["workspaces"] [] # loadDecodable
