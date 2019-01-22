@@ -15,12 +15,12 @@ import Data.Tuple (Tuple(..))
 import PurelyScriptable.Request (Header)
 
 tokenAuth :: String -> Maybe Header
-tokenAuth = (flip authHelper) ":api_token"
+tokenAuth = (flip authHelper) "api_token"
 
 passwordAuth :: String -> String -> Maybe Header
 passwordAuth = authHelper
 
 authHelper :: String -> String -> Maybe Header
 authHelper a b = do
-  key <- a <> b # btoa >>> hush
+  key <- (a <> ":" <> b) # btoa >>> hush
   pure $ Tuple "Authorization" ("Basic " <> key) 

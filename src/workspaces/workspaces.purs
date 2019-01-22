@@ -17,7 +17,7 @@ import Data.Show (class Show, show)
 import Data.Traversable (sequence)
 import Effect.Aff (Aff)
 import PurelyScriptable.Request (Header, loadDecodable)
-import PurelyScriptable.Toggl.Common (request)
+import PurelyScriptable.Toggl.Common (fetch)
 
 data RoundingType = Down | Nearest | Up
 derive instance eqRoundingType :: Eq RoundingType
@@ -37,7 +37,7 @@ caseRoundingType num
 instance decodeRoundingType :: DecodeJson RoundingType where
   decodeJson = toNumber >>> note "Not a number for Rounding Type" >=> caseRoundingType
 
-type WorkspaceId = Int
+type WorkspaceId = String
 
 newtype Workspace = Workspace
   { id :: WorkspaceId
@@ -101,4 +101,4 @@ instance decodeWorkspaces :: DecodeJson Workspaces where
     ws # Workspaces >>> pure
 
 getWorkspaces :: Header -> Aff (Either String (Workspaces))
-getWorkspaces = request "workspaces" >>> loadDecodable
+getWorkspaces = fetch "workspaces" >>> loadDecodable
