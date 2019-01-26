@@ -22,7 +22,7 @@ testDecodeWorkspace = suite "decodeWorkspace" do
   test "from JSON literal" do
     expected `equal` actual where
     expected = 
-      { id : 3161255
+      { id : "3161255"
       , name : "Hello's workspace"
       , premium : false
       , admin : true

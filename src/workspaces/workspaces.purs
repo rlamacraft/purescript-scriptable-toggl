@@ -61,7 +61,7 @@ instance showWorkspace :: Show Workspace where
 instance decodeWorkspace :: DecodeJson Workspace where
   decodeJson json = do
     obj                             <- decodeJObject json
-    id                              <- obj .:  "id"
+    id_asInt                        <- obj .:  "id"
     name                            <- obj .:  "name"
     premium                         <- obj .:  "premium"
     admin                           <- obj .:  "admin"
@@ -73,6 +73,7 @@ instance decodeWorkspace :: DecodeJson Workspace where
     rounding_minutes                <- obj .:  "rounding_minutes"
     at                              <- obj .:  "at"
     logo_url                        <- obj .:? "logo_url"
+    id                              <- (id_asInt :: Int) # show >>> pure
     Workspace
               { id
               , name
