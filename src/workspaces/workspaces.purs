@@ -1,4 +1,10 @@
-module PurelyScriptable.Toggl.Workspaces where
+module PurelyScriptable.Toggl.Workspaces
+  ( Workspaces(..)
+  , Workspace(..)
+  , WorkspaceId
+  , RoundingType(..)
+  , getWorkspaces
+  ) where
 
 import Control.Applicative (pure)
 import Control.Bind (bind, (>=>))

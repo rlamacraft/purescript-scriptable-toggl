@@ -1,4 +1,10 @@
-module PurelyScriptable.Toggl.Projects where
+module PurelyScriptable.Toggl.Projects
+  ( Project(..)
+  , ProjectId
+  , ClientId
+  , TemplateId
+  , getWorkspaceProject
+  ) where
 
 import Color (Color, rgb)
 import Control.Applicative (pure)
