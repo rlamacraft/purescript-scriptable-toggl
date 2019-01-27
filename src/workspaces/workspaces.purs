@@ -17,6 +17,7 @@ import Data.Eq (class Eq, (==))
 import Data.Function ((#))
 import Data.Functor (map)
 import Data.Maybe (Maybe)
+import Data.Newtype (class Newtype)
 import Data.Ring (negate)
 import Data.Semigroup ((<>))
 import Data.Show (class Show, show)
@@ -97,6 +98,7 @@ instance decodeWorkspace :: DecodeJson Workspace where
 
 newtype Workspaces = Workspaces (Array Workspace)
 derive instance eqWorkspaces :: Eq Workspaces
+derive instance newtypeWorkspaces :: Newtype Workspaces _
 
 instance showWorkspaces :: Show Workspaces where
   show (Workspaces ws) = show ws

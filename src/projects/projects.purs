@@ -1,5 +1,6 @@
 module PurelyScriptable.Toggl.Projects
-  ( Project(..)
+  ( Projects(..)
+  , Project(..)
   , ProjectId
   , ClientId
   , TemplateId
@@ -10,16 +11,18 @@ import Color (Color, rgb)
 import Control.Applicative (pure)
 import Control.Bind (bind)
 import Control.Semigroupoid ((>>>))
-import Data.Argonaut (class DecodeJson, (.:), (.:?))
-import Data.Argonaut.Decode.Class (decodeJObject)
+import Data.Argonaut (class DecodeJson, decodeJson, (.:), (.:?))
+import Data.Argonaut.Decode.Class (decodeJArray, decodeJObject)
 import Data.Boolean (otherwise)
 import Data.Either (Either(..))
 import Data.Eq (class Eq, (==))
 import Data.Function ((#), ($))
 import Data.Functor (map)
 import Data.Maybe (Maybe(..), maybe)
+import Data.Newtype (class Newtype)
 import Data.Semigroup ((<>))
 import Data.Show (class Show, show)
+import Data.Traversable (sequence)
 import Effect.Aff (Aff)
 import PurelyScriptable.Request (Header, loadDecodable)
 import PurelyScriptable.Toggl.Common (togglRequest)
@@ -47,6 +50,7 @@ newtype Project = Project
   , rate :: Maybe Number
   }
 derive instance eqProject :: Eq Project
+derive instance newtypeProject :: Newtype Project _
 
 instance showProject :: Show Project where
   show (Project p) = "Project: " <> p.name
@@ -108,5 +112,18 @@ colorIdToColor id
   | id == "14" = Right $ rgb 0   0   0
   | otherwise  = Left "Unknown color id"
 
-getWorkspaceProject :: Header -> Workspace -> Aff (Either String (Array Project))
+newtype Projects = Projects (Array Project)
+derive instance eqProjects :: Eq Projects
+derive instance newtypeProjects :: Newtype Projects _
+
+instance showProjects :: Show Projects where
+  show (Projects ps) = show ps
+
+instance decodeProjects :: DecodeJson Projects where
+  decodeJson json = do
+    array <- decodeJArray json
+    ps <- array # map decodeJson >>> sequence
+    ps # Projects >>> pure                 
+
+getWorkspaceProject :: Header -> Workspace -> Aff (Either String Projects)
 getWorkspaceProject header (Workspace w) = togglRequest header ["workspaces", w.id, "projects"] [] # loadDecodable
