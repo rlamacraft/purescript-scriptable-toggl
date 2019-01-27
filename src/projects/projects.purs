@@ -9,7 +9,7 @@ module PurelyScriptable.Toggl.Projects
 
 import Color (Color, rgb)
 import Control.Applicative (pure)
-import Control.Bind (bind)
+import Control.Bind (bind, (>>=))
 import Control.Semigroupoid ((>>>))
 import Data.Argonaut (class DecodeJson, decodeJson, (.:), (.:?))
 import Data.Argonaut.Decode.Class (decodeJArray, decodeJObject)
@@ -19,7 +19,7 @@ import Data.Eq (class Eq, (==))
 import Data.Function ((#), ($))
 import Data.Functor (map)
 import Data.Maybe (Maybe(..), maybe)
-import Data.Newtype (class Newtype)
+import Data.Newtype (class Newtype, un)
 import Data.Semigroup ((<>))
 import Data.Show (class Show, show)
 import Data.Traversable (sequence)
@@ -27,6 +27,8 @@ import Effect.Aff (Aff)
 import PurelyScriptable.Request (Header, loadDecodable)
 import PurelyScriptable.Toggl.Common (togglRequest)
 import PurelyScriptable.Toggl.Workspaces (Workspace(..), WorkspaceId)
+import PurelyScriptable.UITable (TextAlignment(..), Header(..)) as UIT
+import PurelyScriptable.UITable (class Rowable, Cell(..), Row(..), backgroundColor, defaultRow, present_singleSelect)
 
 type ProjectId = String
 type ClientId = String
@@ -112,6 +114,14 @@ colorIdToColor id
   | id == "14" = Right $ rgb 0   0   0
   | otherwise  = Left "Unknown color id"
 
+instance rowableProject :: Rowable Project where
+  rowable (Project p) = Row config cells where
+    cells = [Text (Just p.name) (Just p.id) UIT.Left]
+    config = { cellSpacing : Nothing
+             , height : Nothing
+             , backgroundColor : p.color >>= backgroundColor }
+  header = UIT.Header $ defaultRow [Text (Just "Projects") (Just "Select one") UIT.Left]
+
 newtype Projects = Projects (Array Project)
 derive instance eqProjects :: Eq Projects
 derive instance newtypeProjects :: Newtype Projects _
@@ -127,3 +137,6 @@ instance decodeProjects :: DecodeJson Projects where
 
 getWorkspaceProject :: Header -> Workspace -> Aff (Either String Projects)
 getWorkspaceProject header (Workspace w) = togglRequest header ["workspaces", w.id, "projects"] [] # loadDecodable
+
+askProject :: Projects -> Aff Project
+askProject = un Projects >>> present_singleSelect
