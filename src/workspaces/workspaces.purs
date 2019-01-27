@@ -61,6 +61,7 @@ newtype Workspace = Workspace
   , logo_url :: Maybe String
   }
 derive instance eqWorkspace :: Eq Workspace
+derive instance newtypeWorkspace :: Newtype Workspace _
 
 instance showWorkspace :: Show Workspace where
   show (Workspace w) = "Workspace: " <> w.name
