@@ -5,6 +5,7 @@ module PurelyScriptable.Toggl.Projects
   , ClientId
   , TemplateId
   , getWorkspaceProject
+  , askProject
   ) where
 
 import Color (Color, rgb)
