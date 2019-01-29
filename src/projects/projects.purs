@@ -25,7 +25,7 @@ import Data.Semigroup ((<>))
 import Data.Show (class Show, show)
 import Data.Traversable (sequence)
 import Effect.Aff (Aff)
-import PurelyScriptable.Request (Header, loadDecodable)
+import PurelyScriptable.Request (Header, Method(..), loadDecodable)
 import PurelyScriptable.Toggl.Common (togglRequest)
 import PurelyScriptable.Toggl.Workspaces (Workspace(..), WorkspaceId)
 import PurelyScriptable.UITable (TextAlignment(..), Header(..)) as UIT
@@ -137,7 +137,7 @@ instance decodeProjects :: DecodeJson Projects where
     ps # Projects >>> pure                 
 
 getWorkspaceProject :: Header -> Workspace -> Aff (Either String Projects)
-getWorkspaceProject header (Workspace w) = togglRequest header ["workspaces", w.id, "projects"] [] # loadDecodable
+getWorkspaceProject header (Workspace w) = togglRequest header GET ["workspaces", w.id, "projects"] [] # loadDecodable
 
 askProject :: Projects -> Aff Project
 askProject = un Projects >>> present_singleSelect

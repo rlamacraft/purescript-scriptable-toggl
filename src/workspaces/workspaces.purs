@@ -23,7 +23,7 @@ import Data.Semigroup ((<>))
 import Data.Show (class Show, show)
 import Data.Traversable (sequence)
 import Effect.Aff (Aff)
-import PurelyScriptable.Request (Header, loadDecodable)
+import PurelyScriptable.Request (Header, Method(..), loadDecodable)
 import PurelyScriptable.Toggl.Common (togglRequest)
 
 data RoundingType = Down | Nearest | Up
@@ -111,4 +111,4 @@ instance decodeWorkspaces :: DecodeJson Workspaces where
     ws # Workspaces >>> pure
 
 getWorkspaces :: Header -> Aff (Either String (Workspaces))
-getWorkspaces header = togglRequest header ["workspaces"] [] # loadDecodable
+getWorkspaces header = togglRequest header GET ["workspaces"] [] # loadDecodable
