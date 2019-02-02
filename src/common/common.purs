@@ -9,12 +9,13 @@ import Control.Bind (bind)
 import Control.Semigroupoid ((<<<))
 import Data.Argonaut (class DecodeJson, class EncodeJson, encodeJson, jsonEmptyObject, (.:), (:=), (~>))
 import Data.Argonaut.Decode.Class (decodeJObject)
+import Data.Array (cons)
 import Data.Foldable (intercalate)
 import Data.Function ((#), ($))
 import Data.Functor (map)
 import Data.Semigroup ((<>))
 import Data.Tuple (Tuple(..))
-import PurelyScriptable.Request (Header, Method, Request(..))
+import PurelyScriptable.Request (Headers, Method(..), Request(..), Header)
 
 type Path = Array String
 type Arg = Tuple String String
@@ -24,11 +25,16 @@ togglEndpoint :: Path
 togglEndpoint = ["https://www.toggl.com", "api", "v8"]
 
 togglRequest :: Header -> Method -> Path -> Args -> Request
-togglRequest authHeader method path args = Request [authHeader] method $ pathToString path <> argsToString args where
+togglRequest authHeader method path args = Request headers method $ pathToString path <> argsToString args where
   pathToString = intercalate "/" <<< ((<>) togglEndpoint)
   argsToString [] = ""
   argsToString as = "?" <> (intercalate "&" $ map argToString as)
   argToString (Tuple k v) = k <> "=" <> v
+  headers = cons authHeader (methodToHeaders method)
+
+methodToHeaders :: Method -> Headers
+methodToHeaders GET = []
+methodToHeaders (POST _) = [Tuple "Content-Type" "application/json"]
 
 newtype DataObject a = DO a
 
