@@ -1,4 +1,7 @@
-module PurelyScriptable.Toggl.TimeEntries where
+module PurelyScriptable.Toggl.TimeEntries
+  ( TimeEntry
+  , startTimeEntry
+  ) where
 
 import Control.Applicative (pure)
 import Control.Bind (bind)
