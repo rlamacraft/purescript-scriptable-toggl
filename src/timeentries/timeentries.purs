@@ -8,7 +8,6 @@ import Control.Bind (bind)
 import Control.Semigroupoid ((>>>))
 import Data.Argonaut (class DecodeJson, class EncodeJson, encodeJson, jsonEmptyObject, stringify, (.:), (.:?), (:=), (:=?), (~>), (~>?))
 import Data.Argonaut.Decode.Class (decodeJObject)
-import Data.Either (Either)
 import Data.Function ((#))
 import Data.Functor (map)
 import Data.Maybe (Maybe(..))
@@ -89,8 +88,8 @@ instance encodeJsonTimeEntryRequest :: EncodeJson TimeEntryRequest where
     = "time_entry" := (encodeJson timeEntry)
     ~> jsonEmptyObject
 
-startTimeEntry :: Header -> Project -> Description -> Aff (Either String TimeEntry)
-startTimeEntry header (Project p) desc = togglRequest header (POST entry) ["time_entries", "start"] [] # loadDecodable >>> map (map unwrap) where
+startTimeEntry :: Header -> Project -> Description -> Aff TimeEntry
+startTimeEntry header (Project p) desc = togglRequest header (POST entry) ["time_entries", "start"] [] # loadDecodable >>> map unwrap where
   entry = TimeEntry
           { description : desc
           , wid : Nothing

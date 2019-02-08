@@ -110,5 +110,5 @@ instance decodeWorkspaces :: DecodeJson Workspaces where
     ws <- array # map decodeJson >>> sequence
     ws # Workspaces >>> pure
 
-getWorkspaces :: Header -> Aff (Either String (Workspaces))
+getWorkspaces :: Header -> Aff Workspaces
 getWorkspaces header = togglRequest header GET ["workspaces"] [] # loadDecodable

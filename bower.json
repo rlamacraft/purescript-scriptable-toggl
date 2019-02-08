@@ -10,7 +10,7 @@
     "purescript-prelude": "^4.1.0",
     "purescript-console": "^4.2.0",
     "purescript-effect": "^2.0.0",
-    "purescript-purely-scriptable": "git://github.com/rlamacraft/purescript-purely-scriptable#v0.1.0",
+    "purescript-purely-scriptable": "git://github.com/rlamacraft/purescript-purely-scriptable#v0.1.1",
     "purescript-b64": "^0.0.5",
     "purescript-colors": "^5.0.0"
   },

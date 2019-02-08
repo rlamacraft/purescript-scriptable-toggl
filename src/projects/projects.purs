@@ -136,7 +136,7 @@ instance decodeProjects :: DecodeJson Projects where
     ps <- array # map decodeJson >>> sequence
     ps # Projects >>> pure                 
 
-getWorkspaceProject :: Header -> Workspace -> Aff (Either String Projects)
+getWorkspaceProject :: Header -> Workspace -> Aff Projects
 getWorkspaceProject header (Workspace w) = togglRequest header GET ["workspaces", w.id, "projects"] [] # loadDecodable
 
 askProject :: Projects -> Aff Project
