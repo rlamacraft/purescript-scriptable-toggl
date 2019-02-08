@@ -1,5 +1,7 @@
 module PurelyScriptable.Toggl.TimeEntries
-  ( TimeEntry
+  ( TimeEntry(..)
+  , Description
+  , TaskId
   , startTimeEntry
   ) where
 
