@@ -13,9 +13,10 @@ import Data.Argonaut.Decode.Class (decodeJObject)
 import Data.Function ((#))
 import Data.Functor (map)
 import Data.Maybe (Maybe(..))
+import Data.Newtype (un)
 import Effect.Aff (Aff)
 import PurelyScriptable.Request (Header, Method(..), loadDecodable)
-import PurelyScriptable.Toggl.Common (togglRequest, unwrap)
+import PurelyScriptable.Toggl.Common (DataObject(..), togglRequest)
 import PurelyScriptable.Toggl.Projects (Project(..), ProjectId)
 import PurelyScriptable.Toggl.Workspaces (WorkspaceId)
 
@@ -91,7 +92,7 @@ instance encodeJsonTimeEntryRequest :: EncodeJson TimeEntryRequest where
     ~> jsonEmptyObject
 
 startTimeEntry :: Header -> Project -> Description -> Aff TimeEntry
-startTimeEntry header (Project p) desc = togglRequest header (POST entry) ["time_entries", "start"] [] # loadDecodable >>> map unwrap where
+startTimeEntry header (Project p) desc = togglRequest header (POST entry) ["time_entries", "start"] [] # loadDecodable >>> map (un DO) where
   entry = TimeEntry
           { description : desc
           , wid : Nothing
