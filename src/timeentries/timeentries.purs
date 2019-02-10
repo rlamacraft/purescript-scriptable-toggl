@@ -56,7 +56,7 @@ instance decodeJsonTimeEntry :: DecodeJson TimeEntry where
     stop           <- obj .:? "stop"
     duration       <- obj .:  "duration"
     created_with   <- obj .:? "created_with"
-    tags_asMaybeA  <- obj .:  "tags"
+    tags_asMaybeA  <- obj .:? "tags"
     tags           <- (tags_asMaybeA :: Maybe (Array String)) # maybe (Right empty) Right
     duronly        <- obj .:? "duronly"
     at             <- obj .:  "at"
