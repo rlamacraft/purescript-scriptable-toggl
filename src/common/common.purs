@@ -1,18 +1,18 @@
 module PurelyScriptable.Toggl.Common
   ( DataObject(..)
   , togglRequest
-  , unwrap
   ) where
 
 import Control.Applicative (pure)
-import Control.Bind (bind)
+import Control.Bind (bind, (>>=))
 import Control.Semigroupoid ((<<<))
-import Data.Argonaut (class DecodeJson, class EncodeJson, encodeJson, jsonEmptyObject, (.:), (:=), (~>))
+import Data.Argonaut (class DecodeJson, class EncodeJson, decodeJson, encodeJson, jsonEmptyObject, (.:), (:=), (~>))
 import Data.Argonaut.Decode.Class (decodeJObject)
 import Data.Array (cons)
 import Data.Foldable (intercalate)
 import Data.Function ((#), ($))
 import Data.Functor (map)
+import Data.Newtype (class Newtype)
 import Data.Semigroup ((<>))
 import Data.Tuple (Tuple(..))
 import PurelyScriptable.Request (Headers, Method(..), Request(..), Header)
@@ -37,17 +37,15 @@ methodToHeaders GET = []
 methodToHeaders (POST _) = [Tuple "Content-Type" "application/json"]
 
 newtype DataObject a = DO a
+derive instance newtypeDataObject :: Newtype (DataObject a) _
 
 instance decodeJsonDataObject :: DecodeJson a => DecodeJson (DataObject a) where
   decodeJson json = do
     obj <- decodeJObject json
-    a <- obj .: "data"
+    a <- obj .: "data" >>= decodeJson
     DO a # pure
 
 instance encodeJsonDataObject :: EncodeJson a => EncodeJson (DataObject a) where
   encodeJson (DO a)
     = "data" := (encodeJson a)
     ~> jsonEmptyObject
-
-unwrap :: forall a . DataObject a -> a
-unwrap (DO a) = a
