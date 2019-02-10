@@ -10,10 +10,12 @@ import Control.Bind (bind)
 import Control.Semigroupoid ((>>>))
 import Data.Argonaut (class DecodeJson, class EncodeJson, encodeJson, jsonEmptyObject, stringify, (.:), (.:?), (:=), (:=?), (~>), (~>?))
 import Data.Argonaut.Decode.Class (decodeJObject)
+import Data.Either (Either(..))
 import Data.Function ((#))
 import Data.Functor (map)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), maybe)
 import Data.Newtype (un)
+import Data.Show (show)
 import Effect.Aff (Aff)
 import PurelyScriptable.Request (Header, Method(..), loadDecodable)
 import PurelyScriptable.Toggl.Common (DataObject(..), togglRequest)
@@ -40,19 +42,22 @@ newtype TimeEntry = TimeEntry
 
 instance decodeJsonTimeEntry :: DecodeJson TimeEntry where
   decodeJson json = do
-    obj          <- decodeJObject json
-    description  <- obj .:  "description"
-    wid          <- obj .:? "wid"
-    pid          <- obj .:? "pid"
-    tid          <- obj .:? "tid"
-    billable     <- obj .:? "billable"
-    start        <- obj .:  "start"
-    stop         <- obj .:? "stop"
-    duration     <- obj .:  "duration"
-    created_with <- obj .:  "created_with"
-    tags         <- obj .:  "tags"
-    duronly      <- obj .:? "duronly"
-    at           <- obj .:  "at"
+    obj            <- decodeJObject json
+    description    <- obj .:  "description"
+    wid_asMaybeInt <- obj .:? "wid"
+    wid            <- (wid_asMaybeInt :: Maybe Int) # maybe (Right Nothing) (show >>> Just >>> Right)
+    pid_asMaybeInt <- obj .:? "pid"
+    pid            <- (pid_asMaybeInt :: Maybe Int) # maybe (Right Nothing) (show >>> Just >>> Right)
+    tid_asMaybeInt <- obj .:? "tid"
+    tid            <- (tid_asMaybeInt :: Maybe Int) # maybe (Right Nothing) (show >>> Just >>> Right)
+    billable       <- obj .:? "billable"
+    start          <- obj .:  "start"
+    stop           <- obj .:? "stop"
+    duration       <- obj .:  "duration"
+    created_with   <- obj .:  "created_with"
+    tags           <- obj .:  "tags"
+    duronly        <- obj .:? "duronly"
+    at             <- obj .:  "at"
     TimeEntry
       { description
       , wid
