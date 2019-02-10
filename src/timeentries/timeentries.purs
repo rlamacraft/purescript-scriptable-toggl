@@ -7,6 +7,7 @@ module PurelyScriptable.Toggl.TimeEntries
 
 import Control.Applicative (pure)
 import Control.Bind (bind)
+import Control.Plus (empty)
 import Control.Semigroupoid ((>>>))
 import Data.Argonaut (class DecodeJson, class EncodeJson, encodeJson, jsonEmptyObject, stringify, (.:), (.:?), (:=), (:=?), (~>), (~>?))
 import Data.Argonaut.Decode.Class (decodeJObject)
@@ -34,7 +35,7 @@ newtype TimeEntry = TimeEntry
   , start :: String
   , stop :: Maybe String
   , duration :: Int
-  , created_with :: String
+  , created_with :: Maybe String
   , tags :: Array String
   , duronly :: Maybe Boolean
   , at :: String
@@ -54,8 +55,9 @@ instance decodeJsonTimeEntry :: DecodeJson TimeEntry where
     start          <- obj .:  "start"
     stop           <- obj .:? "stop"
     duration       <- obj .:  "duration"
-    created_with   <- obj .:  "created_with"
-    tags           <- obj .:  "tags"
+    created_with   <- obj .:? "created_with"
+    tags_asMaybeA  <- obj .:  "tags"
+    tags           <- (tags_asMaybeA :: Maybe (Array String)) # maybe (Right empty) Right
     duronly        <- obj .:? "duronly"
     at             <- obj .:  "at"
     TimeEntry
@@ -83,8 +85,8 @@ instance encodeJsonTimeEntry :: EncodeJson TimeEntry where
     ~>? "start"        :=  te.start
     ~>  "stop"         :=? te.stop
     ~>? "duration"     :=  te.duration
-    ~>  "created_with" :=  te.created_with
-    ~>  "tags"         :=  te.tags
+    ~>  "created_with" :=? te.created_with
+    ~>? "tags"         :=  te.tags
     ~>  "duronly"      :=? te.duronly
     ~>? "at"           :=  te.at
     ~> jsonEmptyObject
@@ -107,7 +109,7 @@ startTimeEntry header (Project p) desc = togglRequest header (POST entry) ["time
           , start : ""
           , stop : Nothing
           , duration : 0
-          , created_with : "PurelyScriptable"
+          , created_with : Just "PurelyScriptable"
           , tags : []
           , duronly : Nothing
           , at : ""
